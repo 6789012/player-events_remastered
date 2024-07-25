@@ -1,0 +1,23 @@
+[versions]
+minecraft = "1.20.1"
+quilt_mappings = "1.20.1+build.10"
+fabric_loader = "0.15.11"
+fabric_registry_sync = "0.14.21+1.20.1"
+
+fabric_api = "0.92.2+1.20.1"
+placeholder_api = "2.1.2+1.20.1"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+quilt_mappings = { module = "org.quiltmc:quilt-mappings", version.ref = "quilt_mappings" }
+fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+fabric_registry_sync = { module = "net.fabricmc.fabric-api:fabric-registry-sync-v0", version.ref = "fabric_registry_sync" }
+
+fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+placeholder_api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder_api" }
+
+[plugins]
+fabric_loom = { id = "fabric-loom", version = "1.1-SNAPSHOT" }
+minotaur = { id = "com.modrinth.minotaur", version = "2.8.1" }
+cursegradle = { id = "com.matthewprenger.cursegradle", version = "1.4.0" }
+loom_quiltflower = { id = "io.github.juuxel.loom-quiltflower", version = "1.10.0"}

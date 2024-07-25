@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "player_events",
+  "version": "${version}",
+
+  "name": "Player Events",
+  "description": "A mod that executes and sends configurable commands,messages,sounds and give imtem respectively on certain events triggered by a player.",
+  "authors": [
+    "ByMartrixx", "Stiven53"
+  ],
+  "contact": {
+    "sources": "https://github.com/ByMartrixx/player-events",
+    "issues": "https://github.com/ByMartrixx/player-events/issues"
+  },
+
+  "license": "MIT",
+
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "me.bymartrixx.playerevents.PlayerEvents"
+    ]
+  },
+  "mixins": [
+    "player_events.mixins.json"
+  ],
+
+  "depends": {
+    "player_events_api": "*",
+    "fabric-command-api-v2": "*",
+    "minecraft": ">=1.20"
+  }
+}

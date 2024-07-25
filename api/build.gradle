@@ -1,0 +1,14 @@
+group = "${rootProject.group}.player-events"
+archivesBaseName = "player-events-api"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
