@@ -7,7 +7,7 @@
 
 **Note: this mod is server side only and won't work on clients and Mod require LuckPerms mod!**
 A Fabric mod that executes and sends configurable commands (with custom permissions), actions (such as playing sound, give items) and messages respectively on certain
-events triggered by a player, such as Dying, Joining a server, Killing another player, etc.
+events triggered by a player, such as Dying, Joining a server, Killing another player, etc. **Also, this mod removes vanilla messages about death, entry/exit of players**
 
 **Since 2.2.0** Datapacks can define functions that will be executed on an event, using the corresponding function tag `#player_events:<event>`
 The config file is located in the config directory (`config/player_events.json`) and looks like this:
