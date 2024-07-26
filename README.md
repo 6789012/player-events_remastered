@@ -5,13 +5,11 @@
 
 <a href='https://www.curseforge.com/minecraft/mc-mods/fabric-api'><img src='https://i.imgur.com/Ol1Tcf8.png' width="150"></a>
 
-**Note: this mod is server side only and won't work on clients**
-
-A Fabric mod that executes and sends configurable commands and messages respectively on certain
+**Note: this mod is server side only and won't work on clients and Mod require LuckPerms mod!**
+A Fabric mod that executes and sends configurable commands (with custom permissions), actions (such as playing sound, give items) and messages respectively on certain
 events triggered by a player, such as Dying, Joining a server, Killing another player, etc.
 
 **Since 2.2.0** Datapacks can define functions that will be executed on an event, using the corresponding function tag `#player_events:<event>`
-
 The config file is located in the config directory (`config/player_events.json`) and looks like this:
 
 ```JSON
@@ -32,7 +30,7 @@ The config file is located in the config directory (`config/player_events.json`)
   },
   "first_join": {
     "actions": [
-      "Welcome to the server ${player}! Remember to read the rules"
+      "Welcome to the server ${player}! Remember to read the rules", "*minecraft:entity.experience_orb.pickup"
     ],
     "broadcast_to_everyone": false,
     "pick_message_randomly": false
@@ -40,14 +38,17 @@ The config file is located in the config directory (`config/player_events.json`)
   "join": {
     "actions": [
       "Welcome ${player}",
-      "/say Hello ${player}"
+      "/say Hello ${player}",
+      "<Red>You received 64 stone blocks and 64 planks!",
+      "#minecraft:stone:64", 
+      "#minecraft:planks:64"
     ],
     "broadcast_to_everyone": true,
     "pick_message_randomly": false
   },
   "kill_entity": {
     "actions": [
-      "${player} killed ${killedEntity}"
+      "${player} <Green>killed ${killedEntity}"
     ],
     "broadcast_to_everyone": true,
     "pick_message_randomly": false
@@ -63,7 +64,7 @@ The config file is located in the config directory (`config/player_events.json`)
   "leave": {
     "actions": [
       "Goodbye ${player}!",
-      "/say Hope to see you soon ${player}"
+      "/say Hope to see you soon ${player}", "*minecraft:block.note_block.bass"
     ],
     "broadcast_to_everyone": true,
     "pick_message_randomly": false
@@ -83,6 +84,20 @@ The config file is located in the config directory (`config/player_events.json`)
         "/tp ${player} 0 64 0 0 0"
       ],
       "broadcast_to_everyone": true,
+      "pick_message_randomly": false
+    },
+    {
+      "command": "@gm 0",
+      "actions": [
+        "/gamemode survival ${player}"],
+      "broadcast_to_everyone": false,
+      "pick_message_randomly": false
+    },
+    {
+      "command": "@gm 1",
+      "actions": [
+        "/gamemode survival ${player}"],
+      "broadcast_to_everyone": false,
       "pick_message_randomly": false
     }
   ]
@@ -110,7 +125,7 @@ Here is a list of all the properties:
 
 ~~Supports [color codes](https://minecraft.gamepedia.com/Formatting_codes#Color_codes) too!~~ Formatting with color
 codes breaks if you use a placeholder, use [Simple Text Format](https://placeholders.pb4.eu/user/text-format/) instead,
-which is far more complete than vanilla color codes.
+which is far more complete than vanilla color codes. Also auto-detecting links in the messages works (but you can only apply one color at the beginning of the message, other colors will not apply)
 
 Use `/pe reload` or `/player_events reload` to reload the mod config.
 
@@ -128,6 +143,13 @@ event, or use `/pe test *` to test every event.
     * `${killedPlayer}` - the killed player.
 * `leave` - Executed when a player leaves.
 * `custom_commands` - Custom defined events triggered by using a defined command. **Note: This event does not support datapack functions**
+
+### 2.4.7 supported custom actions
+* `#you_item_id_value(for example minecraft:stone:3)` - Gives you 3 stone block
+* `*sound_id` - Play sound locally to player or global (its depends on boolean broadcast_to_everyone value)
+* `@you_command_without_/` - Registering custom command with permission luckperms (for example @gm1 executing command /gamemode 1, in lp editor you need to add @gm1 permission)
+
+
 
 Additionally, you can create simple commands (if you want a more complex command, this mod isn't what you
 are looking for) or listen to existing ones.
