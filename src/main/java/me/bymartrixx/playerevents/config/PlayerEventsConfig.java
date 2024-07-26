@@ -170,6 +170,26 @@ public class PlayerEventsConfig {
 
     }
 
+    public static void playSoundIndividual(ServerPlayerEntity player, String soundId) {
+        // Отбрасываем первый символ '*' из soundId
+        soundId = soundId.substring(1);
+
+        // Получаем идентификатор звука
+        Identifier soundIdentifier = new Identifier(soundId);
+        // Получаем SoundEvent из реестра
+        SoundEvent soundEvent = Registries.SOUND_EVENT.get(soundIdentifier);
+
+        // Проверка на случай, если звук не найден
+        if (soundEvent == null) {
+            System.err.println("Звук не найден: " + soundId);
+            return;
+        }
+
+        // Проигрываем звук
+            player.playSound(soundEvent, player.getSoundCategory(), 1.0F, 1.0F);
+
+    }
+
 
     private static void doSimpleAction(ActionList actionList, ServerPlayerEntity player,
                                        MinecraftServer server) {
@@ -246,7 +266,7 @@ public class PlayerEventsConfig {
             player.giveItemStack(itemStack);
         } else if (action.startsWith("*")) {
             String str = message.getString();
-            playSoundToAllPlayers(server, str);
+            if (broadcast) {playSoundToAllPlayers(server, str);} else {playSoundIndividual(player, str);}
         }
         else {
 			Utils.message(player, message, broadcast);
