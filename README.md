@@ -1,7 +1,7 @@
 # Player Events
 
-[ ![GitHub release](https://img.shields.io/github/v/release/ByMartrixx/player-events) ](https://github.com/ByMartrixx/player-events/releases/latest)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ByMartrixx/player-events/build)
+[ ![GitHub release](https://img.shields.io/github/v/release/6789012/player-events_remastered?display_name=release
+) ](https://github.com/ByMartrixx/player-events/releases/latest)
 
 <a href='https://www.curseforge.com/minecraft/mc-mods/fabric-api'><img src='https://i.imgur.com/Ol1Tcf8.png' width="150"></a>
 
@@ -69,6 +69,11 @@ The config file is located in the config directory (`config/player_events.json`)
     "broadcast_to_everyone": true,
     "pick_message_randomly": false
   },
+  "get_advancement": {
+    "actions": ["<yellow>> <gold>${player} <yellow>got an achievement ${advancement}!"],
+    "broadcast_to_everyone": true,
+    "pick_message_randomly": false
+  },
   "custom_commands": [
     {
       "command": "/plugins",
@@ -123,6 +128,8 @@ Here is a list of all the properties:
   Entity coordinates
 - More coming soon™
 
+Only for event **get_advancement** has a `${advancement}` - returns the clickable name of the achievement.
+
 ~~Supports [color codes](https://minecraft.gamepedia.com/Formatting_codes#Color_codes) too!~~ Formatting with color
 codes breaks if you use a placeholder, use [Simple Text Format](https://placeholders.pb4.eu/user/text-format/) instead,
 which is far more complete than vanilla color codes. Also auto-detecting links in the messages works (but you can only apply one color at the beginning of the message, other colors will not apply)
@@ -132,7 +139,7 @@ Use `/pe reload` or `/player_events reload` to reload the mod config.
 You can use `/pe test <event>` or `/player_events test <event>` to test the actions on a specific
 event, or use `/pe test *` to test every event.
 
-### 2.2.1 supported events
+### 2.4.8 supported events
 * `first_death` - Executed when a player dies for first time.
 * `death` - Executed when a player dies.
 * `first_join` - Executed when a player joins for first time.
@@ -142,6 +149,7 @@ event, or use `/pe test *` to test every event.
 * `kill_player` - Executed when a player kills another player. Extra tokens:
     * `${killedPlayer}` - the killed player.
 * `leave` - Executed when a player leaves.
+* `get_advancement` - Executed when the player receives an achievement.
 * `custom_commands` - Custom defined events triggered by using a defined command. **Note: This event does not support datapack functions**
 
 ### 2.4.7 supported custom actions
@@ -151,8 +159,7 @@ event, or use `/pe test *` to test every event.
 
 
 
-Additionally, you can create simple commands (if you want a more complex command, this mod isn't what you
-are looking for) or listen to existing ones.
+Additionally, you can create simple commands (if you want a more complex command, this will be added in future) or listen to existing ones.
 
 ### Troubleshooting
 If you get an error when initializing the server or when an action should be executed, here are
