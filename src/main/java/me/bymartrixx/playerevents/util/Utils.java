@@ -67,7 +67,7 @@ public class Utils {
 
         for (String word : splitText) {
             Style style = input.getStyle();
-            PlayerEvents.LOGGER.info(style);
+            //PlayerEvents.LOGGER.info(style);
             if (word.startsWith("http://") || word.startsWith("https://")) {
                 style = Style.EMPTY
                         .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, word))

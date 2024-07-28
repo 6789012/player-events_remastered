@@ -4,14 +4,9 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import me.bymartrixx.playerevents.api.event.CommandExecutionCallback;
-import me.bymartrixx.playerevents.api.event.PlayerDeathCallback;
-import me.bymartrixx.playerevents.api.event.PlayerFirstDeathCallback;
-import me.bymartrixx.playerevents.api.event.PlayerFirstJoinCallback;
-import me.bymartrixx.playerevents.api.event.PlayerJoinCallback;
-import me.bymartrixx.playerevents.api.event.PlayerKillEntityCallback;
-import me.bymartrixx.playerevents.api.event.PlayerKillPlayerCallback;
-import me.bymartrixx.playerevents.api.event.PlayerLeaveCallback;
+import eu.pb4.placeholders.api.PlaceholderResult;
+import eu.pb4.placeholders.api.Placeholders;
+import me.bymartrixx.playerevents.api.event.*;
 import me.bymartrixx.playerevents.command.PlayerEventsCommand;
 import me.bymartrixx.playerevents.config.PlayerEventsConfig;
 import net.fabricmc.api.DedicatedServerModInitializer;
@@ -19,7 +14,10 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,6 +62,9 @@ public class PlayerEvents implements DedicatedServerModInitializer {
 		PlayerFirstJoinCallback.EVENT.register(CONFIG::doFirstItemJoin);
 
         CommandExecutionCallback.EVENT.register(CONFIG::doCustomCommandsActions);
+
+        PlayerAdvancementCallback.EVENT.register(CONFIG::doGetAdvancement);
+
     }
 
     public void onEnable(MinecraftServer server){

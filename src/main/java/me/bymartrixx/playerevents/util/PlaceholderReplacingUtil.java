@@ -3,6 +3,8 @@ package me.bymartrixx.playerevents.util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import eu.pb4.placeholders.api.Placeholders;
+import me.bymartrixx.playerevents.PlayerEvents;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -21,6 +23,10 @@ public class PlaceholderReplacingUtil {
         case "x" -> Utils.doubleToText(entity.getX());
         case "y" -> Utils.doubleToText(entity.getY());
         case "z" -> Utils.doubleToText(entity.getZ());
+        default -> null;
+    };
+    public static final KeyResolver<Advancement> ADVANCEMENT_RESOLVER = (advancement, subKey) -> switch (subKey) {
+        case "" -> advancement.toHoverableText();
         default -> null;
     };
     public static final KeyResolver<ServerCommandSource> COMMAND_SOURCE_RESOLVER = (source, subKey) -> {
@@ -78,9 +84,12 @@ public class PlaceholderReplacingUtil {
             Text text = resolve(resolver, arg, key);
             if (text != null) {
                 return text;
+            } else {
+                //PlayerEvents.LOGGER.info("Resolver returned null for key: " + key);
             }
+        } else {
+            //PlayerEvents.LOGGER.info("No resolver found for key: " + key);
         }
-
         return Text.literal("<Unknown placeholder '" + key + "'>");
     }
 
@@ -90,12 +99,21 @@ public class PlaceholderReplacingUtil {
     }
 
     public static KeyResolver<?> getResolver(Object arg) {
+        if (arg != null) {
+            //PlayerEvents.LOGGER.info("Resolver Type: " + arg.getClass().getName());
+        } else {
+            //PlayerEvents.LOGGER.info("Resolver Type: arg was null");
+        }
         if (arg instanceof Entity) {
             return ENTITY_RESOLVER;
         }
 
         if (arg instanceof ServerCommandSource) {
             return COMMAND_SOURCE_RESOLVER;
+        }
+
+        if (arg instanceof net.minecraft.advancement.Advancement) {
+            return ADVANCEMENT_RESOLVER;
         }
 
         if (arg instanceof Text) {

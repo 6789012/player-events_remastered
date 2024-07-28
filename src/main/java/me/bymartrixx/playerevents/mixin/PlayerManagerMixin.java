@@ -54,7 +54,7 @@ public class PlayerManagerMixin {
         // Регулярное выражение для сообщений о присоединении/выходе и смерти
         String msg = message.getString();
         // Список ключевых слов
-        List<String> keywords = Arrays.asList("joined", "left", "was slain by", "drowned", "suffocated in a wall", "was shot by", "was pricked to death", "hit the ground too hard", "fell from a high place", "was blown up by", "was killed by magic", "starved to death", "was squashed by a falling anvil", "was pummeled by", "was impaled by", "fell out of the world", "withered away", "died", "tried to swim in lava", "suffocated in a wall", "was killed trying to hurt", "died because of", "was burnt to a crisp whilst fighting", "walked into a cactus whilst trying to escape", "got finished off by", "went up in flames", "burned to death", "froze to death", "was struck by lightning");
+        List<String> keywords = Arrays.asList("joined", "left");
 
         // Проверяем, содержит ли сообщение какое-либо из ключевых слов
         for (String keyword : keywords) {

@@ -13,6 +13,7 @@ import me.bymartrixx.playerevents.mixin.CommandFunctionManagerAccessor;
 import me.bymartrixx.playerevents.util.Utils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.luckperms.api.node.Node;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -52,9 +53,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static me.bymartrixx.playerevents.util.PlaceholderReplacingUtil.lazyResolver;
 
@@ -117,6 +116,7 @@ public class PlayerEventsConfig {
     private final ActionList killPlayer;
     private final ActionList leave;
 	private final ActionList firstGiveItem;
+    private final ActionList getAdvancement;
     private final List<CustomCommandActionList> customCommands;
 
     public PlayerEventsConfig() {
@@ -128,6 +128,7 @@ public class PlayerEventsConfig {
         this.killPlayer = new ActionList();
         this.leave = new ActionList();
 		this.firstGiveItem = new ActionList();
+        this.getAdvancement = new ActionList();
         this.customCommands = Lists.newArrayList();
     }
 
@@ -210,6 +211,32 @@ public class PlayerEventsConfig {
         }
     }
 
+    private static void doAdvacementAction(ActionList actionList, ServerPlayerEntity player, Text messageText, Advancement advancement) {
+
+
+        Map<String, Object> placeholderArgs = playerPlaceholder(player);
+        placeholderArgs.put("advancement", advancement);
+
+        PlayerEvents.LOGGER.info(advancement);
+
+        List<String> actions;
+        if (actionList.pickMessageRandomly()) {
+            actions = actionList.getCommandActions();
+            List<String> messageActions = actionList.getMessageActions();
+            String message = messageActions.get(player.getRandom().nextInt(messageActions.size()));
+            actions.add(message);
+        } else {
+            actions = actionList.actions;
+        }
+
+        MinecraftServer server = player.getServer();
+
+        for (String action : actions) {
+            doAction(action, player, server, placeholderArgs, actionList.doBroadcastToEveryone(), advancement);
+        }
+    }
+
+
     private static void doAction(String action, ServerPlayerEntity player,
                                  Map<String, ?> placeholderArgs, boolean broadcast) {
         MinecraftServer server = player.getServer();
@@ -219,6 +246,61 @@ public class PlayerEventsConfig {
 
         doAction(action, player, server, placeholderArgs, broadcast);
     }
+
+    private static void doAction(String action, ServerPlayerEntity player, MinecraftServer server,
+                                 Map<String, ?> placeholderArgs, boolean broadcast, Advancement advancement) {
+        action = action.trim();
+        //PlayerEvents.LOGGER.error(action);
+        Text message = Utils.parseAndReplace(action, player, placeholderArgs);
+
+        if (action.startsWith("/") || action.startsWith("@")) {
+            String command = message.getString();
+            if (action.startsWith("@")) {
+                if (hasPermission(player, command))
+                {
+                    PlayerEvents.LOGGER.error("/" + command.substring(1));
+                    //PlayerEvents.LOGGER.error(Utils.parseAndReplace(action, player, placeholderArgs).getString());
+                    //doAction("/" + Utils.parseAndReplace(action, player, placeholderArgs).getString().substring(1), player, server,
+                    //        placeholderArgs, broadcast);
+                    //server.getCommandManager().executeWithPrefix(player.getCommandSource(), "/map");
+                    PlayerEvents.LOGGER.error(player.getName().toString());
+                    CommandExecutionCallback.EVENT.invoker().onExecuted(command.substring(1), player.getCommandSource().withEntity(player));
+                }
+                else
+                {
+                    player.sendMessage(Text.literal("У вас нет разрешения на это!").setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
+                }
+            }
+            else {
+                server.getCommandManager().executeWithPrefix(server.getCommandSource(), command);
+            }
+        } else if (action.startsWith("#")) {
+            String str = message.getString();
+            int index1 = str.indexOf(":");
+            int index2 = str.indexOf(":", index1 + 1);
+
+            String itemId = str.substring(1, index2);
+            String countStr = str.substring(index2 + 1);
+
+            int count = Integer.parseInt(countStr);
+
+            Item item = Registries.ITEM.get(new Identifier(itemId));
+            PlayerEvents.LOGGER.error(itemId, countStr);
+            // Создаем новый экземпляр предмета
+            ItemStack itemStack = new ItemStack(item, count);
+
+            // Добавляем предмет в инвентарь игрока
+            player.giveItemStack(itemStack);
+        } else if (action.startsWith("*")) {
+            String str = message.getString();
+            if (broadcast) {playSoundToAllPlayers(server, str);} else {playSoundIndividual(player, str);}
+        }
+        else {
+            Utils.message(player, message, broadcast);
+        }
+    }
+
+
 
     private static void doAction(String action, ServerPlayerEntity player, MinecraftServer server,
                                  Map<String, ?> placeholderArgs, boolean broadcast) {
@@ -330,6 +412,7 @@ public class PlayerEventsConfig {
         this.killEntity.load(newConfig.killEntity);
         this.killPlayer.load(newConfig.killPlayer);
         this.leave.load(newConfig.leave);
+        this.getAdvancement.load(newConfig.getAdvancement);
 
         this.customCommands.clear();
         for (CustomCommandActionList customCommand : newConfig.customCommands) {
@@ -355,6 +438,10 @@ public class PlayerEventsConfig {
 	
 	    public List<String> getFirstItemActions() {
         return this.firstGiveItem.actions;
+    }
+
+    public List<String> getAdvencementActions() {
+        return this.getAdvancement.actions;
     }
 
     public List<String> getJoinActions() {
@@ -401,6 +488,13 @@ public class PlayerEventsConfig {
     public void doLeaveActions(ServerPlayerEntity player, MinecraftServer server) {
         doSimpleAction(this.leave, player, server);
         executeFunctions("leave", server);
+    }
+
+    public void doGetAdvancement(ServerPlayerEntity player, Text message, Advancement advancement)
+    {
+        PlayerEvents.LOGGER.info("Было получено достижение!");
+        doAdvacementAction(this.getAdvancement, player, message, advancement);
+        //executeFunctions("getAdvancement", Objects.requireNonNull(player.getServer()));
     }
 
     public void doKillEntityActions(ServerPlayerEntity player, Entity killedEntity) {
