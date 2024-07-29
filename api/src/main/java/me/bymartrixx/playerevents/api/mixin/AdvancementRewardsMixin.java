@@ -18,7 +18,7 @@ import net.minecraft.advancement.AdvancementRewards;
 
 import java.util.Set;
 
-@Mixin(PlayerAdvancementTracker.class)
+@Mixin(value = PlayerAdvancementTracker.class, priority = 999)
 public abstract class AdvancementRewardsMixin {
 
     @Shadow
